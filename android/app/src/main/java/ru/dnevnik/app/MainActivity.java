@@ -43,19 +43,20 @@ public class MainActivity extends Activity {
 
         webView = new WebView(this);
         webView.setBackgroundColor(Color.parseColor("#F3EEE4"));
-        webView.setWebViewClient(new LocalWebViewClient(getAssets()));
+        webView.setWebViewClient(new LocalWebViewClient(this));
+        webView.setWebChromeClient(new DnevnikChromeClient(this));
         webView.addJavascriptInterface(new DnevnikBridge(this), "DnevnikNative");
 
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);
         settings.setDatabaseEnabled(true);
-        settings.setAllowFileAccess(false);
+        settings.setAllowFileAccess(true);
         settings.setAllowContentAccess(true);
         settings.setUseWideViewPort(true);
         settings.setLoadWithOverviewMode(true);
         settings.setTextZoom(100);
-        settings.setCacheMode(WebSettings.LOAD_DEFAULT);
+        settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
         settings.setMediaPlaybackRequiresUserGesture(false);
         if (Build.VERSION.SDK_INT >= 21) {
             settings.setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
@@ -93,15 +94,29 @@ public class MainActivity extends Activity {
         if (manager != null) manager.createNotificationChannel(channel);
     }
 
+    private void flushPlanner() {
+        if (webView == null) return;
+        webView.evaluateJavascript(
+                "(function(){try{"
+                        + "var s=localStorage.getItem('dnevnik-planner-v1');"
+                        + "if(!s)return;"
+                        + "if(window.DnevnikNative&&DnevnikNative.setPlanner)DnevnikNative.setPlanner(s);"
+                        + "prompt('__DNEVNIK_SAVE__',s);"
+                        + "}catch(e){}})()",
+                null
+        );
+    }
+
     @Override
     protected void onPause() {
-        if (webView != null) {
-            webView.evaluateJavascript(
-                    "(function(){try{document.dispatchEvent(new Event('visibilitychange'))}catch(e){}})()",
-                    null
-            );
-        }
+        flushPlanner();
         super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        flushPlanner();
+        super.onStop();
     }
 
     @Override

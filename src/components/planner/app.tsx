@@ -20,6 +20,7 @@ import {
 } from "@/lib/planner/reminders";
 import { getWeekDays, isPastDate, todayISO, toISODate } from "@/lib/planner/dates";
 import { usePlannerStore } from "@/lib/planner/store";
+import { flushPlannerToDevice } from "@/lib/planner/storage";
 import type { PlannerTab, Task } from "@/lib/planner/types";
 import { cn } from "@/lib/utils";
 
@@ -61,10 +62,28 @@ export function PlannerApp() {
     void Promise.resolve(usePlannerStore.persist.rehydrate()).then(() => {
       if (cancelled) return;
       usePlannerStore.getState().ensureSeed();
+      flushPlannerToDevice();
       setReady(true);
     });
     return () => {
       cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    function flush() {
+      flushPlannerToDevice();
+    }
+    function onHide() {
+      if (document.visibilityState === "hidden") flush();
+    }
+    window.addEventListener("pagehide", flush);
+    window.addEventListener("beforeunload", flush);
+    document.addEventListener("visibilitychange", onHide);
+    return () => {
+      window.removeEventListener("pagehide", flush);
+      window.removeEventListener("beforeunload", flush);
+      document.removeEventListener("visibilitychange", onHide);
     };
   }, []);
 

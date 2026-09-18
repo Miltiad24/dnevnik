@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" role="img" aria-label="Дневник">
+  <rect width="16" height="16" rx="3.5" fill="#2A5F52"/>
+  <rect x="4" y="3" width="8" height="10" rx="1.2" fill="#FAF7F1"/>
+  <path fill="#1C1814" d="M4 4.2c0-.66.54-1.2 1.2-1.2H6.25v10H5.2C4.54 13 4 12.46 4 11.8V4.2z"/>
+  <path fill="none" stroke="#6F675E" stroke-width="1" stroke-linecap="round" d="M7.5 6h3.5M7.5 8h3.5M7.5 10h2.5"/>
+</svg>

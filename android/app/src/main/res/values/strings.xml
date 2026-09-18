@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Дневник</string>
+    <string name="widget_today_name">Дневник — сегодня</string>
+    <string name="widget_list_name">Дневник — список</string>
+    <string name="channel_name">Домашние задания</string>
+    <string name="channel_desc">Вечерние, утренние и напоминания к уроку</string>
+</resources>
